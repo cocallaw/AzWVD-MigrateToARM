@@ -10,7 +10,10 @@ param(
     [string]$TenantName,
 
     [Parameter(mandatory = $true)]
-    [string]$NewHostPoolName,
+    [string]$WVDHostPoolName,
+
+    [Parameter(mandatory = $true)]
+    [string]$WVDHostPoolRGName,
 
     [Parameter(mandatory = $true)]
     [string]$WVDTenantAdminUN,
@@ -117,19 +120,37 @@ else {
 $obj"
 }
 
+#Get ARM WVD Registration Info
+$Registered = $null
+try {
+    $Registered = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
+    if (!$Registered) {
+        $Registered = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+        Write-Log -Message "Created new WVD RegistrationInfo into variable 'Registered': $Registered" 
+    }
+    else {
+        Write-Log -Message "Exported WVD RegistrationInfo into variable 'Registered': $Registered"    
+    }
+}
+catch {
+    $Registered = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+    Write-Log -Message "Created new WVD RegistrationInfo into variable 'Registered': $Registered"
+}
+
 #Remove Installed versions of WVD Agent 
 Write-Log -Message "Uninstalling any previous versions of RDInfra Agent on VM"
-$legacy_agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {5389488F-551D-4965-9383-E91F27A9F217}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDDeployLogPath\AgentUninstall.txt" -Wait -Passthru
+$legacy_agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {5389488F-551D-4965-9383-E91F27A9F217}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDMigrateLogPath\AgentUninstall.txt" -Wait -Passthru
 $sts = $legacy_agent_uninstall_status.ExitCode
 #Remove previous versions of RDInfraAgent DLLs
 Write-Log -Message "Uninstalling any previous versions of RDInfra Agent DLL on VM"
-$agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {CB1B8450-4A67-4628-93D3-907DE29BF78C}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDDeployLogPath\AgentUninstall.txt" -Wait -Passthru
+$agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {CB1B8450-4A67-4628-93D3-907DE29BF78C}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDMigrateLogPath\AgentUninstall.txt" -Wait -Passthru
 $sts = $agent_uninstall_status.ExitCode
 
-#install New WVD Agent
+#Install New WVD Agent
 $AgentInstaller = (dir $WVDMigrateInfraPath\ -Filter *.msi | Select-Object).FullName
+$RegistrationToken = $Registered.Token
 Write-Log -Message "Starting install of $AgentInstaller"
-$agent_deploy_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $AgentInstaller", "/quiet", "/qn", "/norestart", "/passive", "REGISTRATIONTOKEN=$RegistrationToken", "/l* $WVDDeployLogPath\AgentInstall.txt" -Wait -Passthru
+$agent_deploy_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $AgentInstaller", "/quiet", "/qn", "/norestart", "/passive", "REGISTRATIONTOKEN=$RegistrationToken", "/l* $WVDMigrateLogPath\AgentInstall.txt" -Wait -Passthru
 $sts = $agent_deploy_status.ExitCode
 Write-Log -Message "Installing RD Infra Agent on VM Complete. Exit code=$sts"
 
