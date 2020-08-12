@@ -133,3 +133,8 @@ $agent_deploy_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $
 $sts = $agent_deploy_status.ExitCode
 Write-Log -Message "Installing RD Infra Agent on VM Complete. Exit code=$sts"
 
+# Get End Time
+$endDTM = (Get-Date)
+Write-Log -Message "WVD Migration on $hostVMname Finished"
+# Echo Time elapsed
+Write-Log -Message "Elapsed Time: $(($endDTM-$startDTM).totalseconds) seconds"
