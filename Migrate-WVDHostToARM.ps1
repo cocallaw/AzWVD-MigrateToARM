@@ -61,34 +61,6 @@ function Install-AzModule {
     }    
 }
 
-function Load-Module ($m) {
-
-    # If module is imported say that and do nothing
-    if (Get-Module | Where-Object { $_.Name -eq $m }) {
-        Write-Log "Module $m is already imported."
-    }
-    else {
-        # If module is not imported, but available on disk then import
-        if (Get-Module -ListAvailable | Where-Object { $_.Name -eq $m }) {
-            Import-Module $m -Verbose
-        }
-        else {
-
-            # If module is not imported, not available on disk, but is in online gallery then install and import
-            if (Find-Module -Name $m | Where-Object { $_.Name -eq $m }) {
-                Install-Module -Name $m -Force -Verbose -Scope CurrentUser
-                Import-Module $m -Verbose
-            }
-            else {
-
-                # If module is not imported, not available and not in online gallery then abort
-                write-host "Module $m not imported, not available and not in online gallery, exiting."
-                EXIT 1
-            }
-        }
-    }
-}
-
 # Get Start Time
 $startDTM = (Get-Date)
 Write-Log -Message "Starting WVD Migration on Host"
@@ -98,13 +70,18 @@ $hostVMname = $env:computername
 $hostVMdomain = $env:USERDNSDOMAIN
 
 #Check for Prerequsites
+If (-not(Get-InstalledModule Microsoft.RDInfra.RDPowerShell -ErrorAction silentlycontinue)) {
+    Install-AzModule
+}
+else {
+    Write-Log "Az Powershell Modules Previously Installed on Machine"
+}
 
+#Creating Directory Structure
 $WVDMigrateBasePath = "c:\WVDMigrate\"
 $WVDMigrateLogPath = "c:\WVDMigrate\logs"
 $WVDMigrateInfraPath = "C:\WVDMigrate\Infra"
 $infraURI = "https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv"
-
-#Creating Directory Structure and Downloading Assets
 try {
     New-Item -Path $WVDMigrateLogPath -ItemType Directory -Force
     New-Item -Path $WVDMigrateInfraPath -ItemType Directory -Force
@@ -114,13 +91,31 @@ catch {
     Write-Log -Message "Unable to Create Directory Structure for Assets and Logging"
 }
 
-
 #Download Current Version of WVD Agent 
 $AssetstartDTM = (Get-Date)
 Invoke-WebRequest -Uri $infraURI -OutFile "$WVDMigrateInfraPath\Microsoft.RDInfra.RDAgent.Installer-x64.msi"
 Write-Log -Message "Downloaded RDInfra Agent"
 $AssetendDTM = (Get-Date)
 Write-Log -Message "Asset Download Time: $(($AssetendDTM-$AssetstartDTM).totalseconds) seconds"
+
+#Connect to Azure
+$Securepass = ConvertTo-SecureString -String $WVDTenantAdminPW -AsPlainText -Force
+$Credentials = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList ($WVDTenantAdminUN, $Securepass)
+if ($isServicePrincipal) {
+    $authentication = Connect-AzAccount -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId 
+}
+else {
+    $authentication = Connect-AzAccount -Credential $Credentials
+}
+
+if ($authentication) {
+    Write-Log -Message "Azure Powershell Authentication successfully Completed. Result: `
+$obj"  
+}
+else {
+    Write-Log -Error "Azure Powershell Authentication Failed, Error: `
+$obj"
+}
 
 #Remove Installed versions of WVD Agent 
 Write-Log -Message "Uninstalling any previous versions of RDInfra Agent on VM"
