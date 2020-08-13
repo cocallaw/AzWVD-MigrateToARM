@@ -81,7 +81,6 @@ else {
 }
 
 #Creating Directory Structure
-$WVDMigrateBasePath = "c:\WVDMigrate\"
 $WVDMigrateLogPath = "c:\WVDMigrate\logs"
 $WVDMigrateInfraPath = "C:\WVDMigrate\Infra"
 $infraURI = "https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv"
@@ -121,20 +120,20 @@ $obj"
 }
 
 #Get ARM WVD Registration Info
-$Registered = $null
+$HPRegInfo = $null
 try {
-    $Registered = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
-    if (!$Registered) {
-        $Registered = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-        Write-Log -Message "Created new WVD RegistrationInfo into variable 'Registered': $Registered" 
+    $HPRegInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
+    if (($HPRegInfo.Token.Length) -lt 5) {
+        $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+        Write-Log -Message "Created new WVD RegistrationInfo into variable 'HPRegInfo': $HPRegInfo" 
     }
     else {
-        Write-Log -Message "Exported WVD RegistrationInfo into variable 'Registered': $Registered"    
+        Write-Log -Message "Exported WVD RegistrationInfo into variable 'HPRegInfo': $HPRegInfo"    
     }
 }
 catch {
-    $Registered = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-    Write-Log -Message "Created new WVD RegistrationInfo into variable 'Registered': $Registered"
+    $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+    Write-Log -Message "Created new WVD RegistrationInfo into variable 'HPRegInfo': $HPRegInfo"
 }
 
 #Remove Installed versions of WVD Agent 
@@ -148,7 +147,7 @@ $sts = $agent_uninstall_status.ExitCode
 
 #Install New WVD Agent
 $AgentInstaller = (dir $WVDMigrateInfraPath\ -Filter *.msi | Select-Object).FullName
-$RegistrationToken = $Registered.Token
+$RegistrationToken = $HPRegInfo.Token
 Write-Log -Message "Starting install of $AgentInstaller"
 $agent_deploy_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $AgentInstaller", "/quiet", "/qn", "/norestart", "/passive", "REGISTRATIONTOKEN=$RegistrationToken", "/l* $WVDMigrateLogPath\AgentInstall.txt" -Wait -Passthru
 $sts = $agent_deploy_status.ExitCode
