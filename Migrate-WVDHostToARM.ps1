@@ -107,16 +107,14 @@ if ($isServicePrincipal) {
     $authentication = Connect-AzAccount -Credential $Credentials -ServicePrincipal -TenantId $AadTenantId 
 }
 else {
-    $authentication = Connect-AzAccount -Credential $Credentials
+    $authentication = Connect-AzAccount -Credential $Credentials -
 }
 
 if ($authentication) {
-    Write-Log -Message "Azure Powershell Authentication successfully Completed. Result: `
-$obj"  
+    Write-Log -Message "Azure Powershell Authentication successfully Completed." 
 }
 else {
-    Write-Log -Error "Azure Powershell Authentication Failed, Error: `
-$obj"
+    Write-Log -Error "Azure Powershell Authentication Failed"
 }
 
 #Get ARM WVD Registration Info
