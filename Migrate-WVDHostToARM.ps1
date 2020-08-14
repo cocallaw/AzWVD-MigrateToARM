@@ -138,12 +138,11 @@ catch {
 
 #Remove Installed versions of WVD Agent 
 Write-Log -Message "Uninstalling any previous versions of RDInfra Agent on VM"
-$legacy_agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {5389488F-551D-4965-9383-E91F27A9F217}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDMigrateLogPath\AgentUninstall.txt" -Wait -Passthru
-$sts = $legacy_agent_uninstall_status.ExitCode
-#Remove previous versions of RDInfraAgent DLLs
-Write-Log -Message "Uninstalling any previous versions of RDInfra Agent DLL on VM"
-$agent_uninstall_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/x {CB1B8450-4A67-4628-93D3-907DE29BF78C}", "/quiet", "/qn", "/norestart", "/passive", "/l* $WVDMigrateLogPath\AgentUninstall.txt" -Wait -Passthru
-$sts = $agent_uninstall_status.ExitCode
+$RDInfraApps = Get-WmiObject -Class Win32_Product | Where-Object{$_.Name -eq "Remote Desktop Services Infrastructure Agent"}
+foreach($app in $RDInfraApps){
+ Write-Log -Message "Uninstalling Infra Agent $app.Version"
+ $app.Uninstall()
+}
 
 #Install New WVD Agent
 $AgentInstaller = (dir $WVDMigrateInfraPath\ -Filter *.msi | Select-Object).FullName
