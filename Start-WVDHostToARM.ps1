@@ -19,11 +19,14 @@ param(
     [string]$HostVMRG,
 
     [Parameter(mandatory = $false)]
-    [string]$HostVMName
+    [string]$HostVMName,
+
+    [Parameter(mandatory = $false)]
+    [switch]$PreStageOnly
 )
 
 $LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
-$UpdateScriptPath = ""
+$UpdateScriptPath = ".\VMScripts\Update-WVDAgents.ps1"
 
 function Run-PSonVM {
     param (
@@ -68,6 +71,25 @@ catch {
     Write-Host "Created new WVD Host Pool Access Token"
 }
 
-foreach ($H in $HVM) {
-    Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $LoadScriptPath
+if ($PreStageOnly) {
+    foreach ($H in $HVM) {
+        Write-Host "Downloading Current WVD Agent to" + $H.Name + "agent will not be installed" 
+        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $LoadScriptPath
+    }
+}
+elseif ($UpdateOnly) {
+    foreach ($H in $HVM) {
+        Write-Host "Updating WVD Host" + $H.Name + "to host pool" + $WVDHostPoolName 
+        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $UpdateScriptPath
+    }
+}
+else {
+    foreach ($H in $HVM) {
+        Write-Host "Downloading Current WVD Agent to" + $H.Name 
+        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $LoadScriptPath
+    }
+    foreach ($H in $HVM) {
+        Write-Host "Updating WVD Host" + $H.Name + "to host pool" + $WVDHostPoolName 
+        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $UpdateScriptPath
+    }
 }
