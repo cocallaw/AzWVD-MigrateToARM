@@ -44,16 +44,16 @@ function Run-PSonVM {
 }
 
 #Get VMs that are to be updated 
-if ($HostVMName.Length -eq 0) {
+if (($HostVMName.Length -eq 0)) {
     $HVM = Get-AzVM -ResourceGroupName $HostVMRG
     Write-Host "The following VMs will be updated"
     foreach ($H in $HVM) {
         $H.Name
     }
 }
-if ($HostVMName.Length -gt 2) {
+elseif (($HostVMName.Length -ne 0)) {
     $HVM = Get-AzVM -ResourceGroupName $HostVMRG -Name $HostVMName
-    Write-Host "The VM " $HVM.Name " will be updated"
+    Write-Host "The VM" $HVM.Name "will be updated"
 }
 
 #Get the Host Pool Access Token 
