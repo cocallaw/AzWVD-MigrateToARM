@@ -3,10 +3,10 @@ $infraURI = "https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv"
 
 try {
     New-Item -Path $WVDMigrateInfraPath -ItemType Directory -Force
-    Write-Host -Message "Created Directory Structure for WVD Agent"
+    Write-Host "Created Directory Structure for WVD Agent"
 }
 catch {
-    Write-Log -Message "Unable to Create Directory Structure WVD Agent"
+    Write-Host "Unable to Create Directory Structure WVD Agent"
 }
 
 #Download Current Version of WVD Agent 

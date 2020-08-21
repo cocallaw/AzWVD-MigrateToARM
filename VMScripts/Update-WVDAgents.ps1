@@ -6,10 +6,10 @@ param(
 $WVDMigrateInfraPath = "C:\WVDMigrate\Infra"
 
 #Remove Installed versions of WVD Agent 
-Write-Log -Message "Uninstalling any previous versions of RDInfra Agent on VM"
+Write-Host "Uninstalling any previous versions of RDInfra Agent on VM"
 $RDInfraApps = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq "Remote Desktop Services Infrastructure Agent" }
 foreach ($app in $RDInfraApps) {
-    Write-Log -Message "Uninstalling Infra Agent $app.Version"
+    Write-Host "Uninstalling Infra Agent $app.Version"
     $app.Uninstall()
 }
 
