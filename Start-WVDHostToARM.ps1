@@ -22,7 +22,10 @@ param(
     [string]$HostVMName,
 
     [Parameter(mandatory = $false)]
-    [switch]$PreStageOnly
+    [switch]$PreStageOnly,
+
+    [Parameter(mandatory = $false)]
+    [switch]$UpdateOnly
 )
 
 $LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
@@ -41,19 +44,20 @@ function Run-PSonVM {
 }
 
 #Get VMs that are to be updated 
-if ($HVMName -eq $null) {
+if ($HostVMName.Length -eq 0) {
     $HVM = Get-AzVM -ResourceGroupName $HostVMRG
     Write-Host "The following VMs will be updated"
     foreach ($H in $HVM) {
         $H.Name
     }
 }
-else {
+if ($HostVMName.Length -gt 2) {
     $HVM = Get-AzVM -ResourceGroupName $HostVMRG -Name $HostVMName
-    Write-Host "The VM " + $HVM.Name + " will be updated"
+    Write-Host "The VM " $HVM.Name " will be updated"
 }
 
 #Get the Host Pool Access Token 
+<#
 $HPRegInfo = $null
 Write-Host "Collecting WVD Registration Info for Host Pool" $WVDHostPoolName 
 try {
