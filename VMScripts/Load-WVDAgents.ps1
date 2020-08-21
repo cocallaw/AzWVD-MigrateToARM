@@ -1,4 +1,4 @@
-$WVDMigrateInfraPath = "C:\WVDMigrate\Infra"
+$WVDMigrateInfraPath = "C:\WVDMigrate"
 $infraURI = "https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv"
 
 try {

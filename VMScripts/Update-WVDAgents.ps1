@@ -3,7 +3,7 @@ param(
     [string]$HostPoolToken
 )
 
-$WVDMigrateInfraPath = "C:\WVDMigrate\Infra"
+$WVDMigrateInfraPath = "C:\WVDMigrate"
 
 #Remove Installed versions of WVD Agent 
 Write-Host "Uninstalling any previous versions of RDInfra Agent on VM"
@@ -19,3 +19,4 @@ Write-Host "Starting install of $AgentInstaller"
 $agent_deploy_status = Start-Process -FilePath "msiexec.exe" -ArgumentList "/i $AgentInstaller", "/quiet", "/qn", "/norestart", "/passive", "REGISTRATIONTOKEN=$RegistrationToken", "/l* $WVDMigrateInfraPath\AgentInstall.txt" -Wait -Passthru
 $sts = $agent_deploy_status.ExitCode
 Write-Host "Installing RD Infra Agent on VM Complete. Exit code=$sts"
+
