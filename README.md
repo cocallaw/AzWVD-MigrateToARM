@@ -6,11 +6,11 @@ In order to run the scripts you must have a current version of Azure Powershell 
 
 #
 
-| Prameter | Type | Description |
-| ----------- | ----------- | ----------- |
-| WVDHostPoolRGName | String | Name of Resource Group containing destination WVD Host Pool |
-| WVDHostPoolName | String | Name of the destination WVD Host Pool |
-| HostVMRG | String | Name of Resource Group containing WVD Hosts to update |
-| HostVMName | String | Name of single WVD Host to update |
-| PreStageOnly | Switch | If specified will only stage the VM by downloading current agent to C:\WVDMigrate directory on VM |
-| UpdateOnly | Switch | If specified will only update the VM WVD Host Pool registration. VM should be prestaged first with `-PreStageOnly` switch |
+| Prameter | Type | Required | Description |
+| ----------- | ----------- | ----------- |----------- |
+| WVDHostPoolRGName | String | Yes | Name of Resource Group containing destination WVD Host Pool |
+| WVDHostPoolName | String | Yes | Name of the destination WVD Host Pool |
+| HostVMRG | String | Yes | Name of Resource Group containing WVD Hosts to update |
+| HostVMName | String | No | Name of single WVD Host to update. If not specified script will select all VMs in the Resource Group defined by the `-HostVMRG` parameter |
+| PreStageOnly | Switch || If specified will only stage the VM by downloading current agent to C:\WVDMigrate directory on VM |
+| UpdateOnly | Switch || If specified will only update the VM WVD Host Pool registration. VM should be prestaged first with `-PreStageOnly` switch |
