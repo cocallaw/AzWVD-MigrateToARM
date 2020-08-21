@@ -93,3 +93,6 @@ else {
         Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $UpdateScriptPath
     }
 }
+
+
+Invoke-AzVMRunCommand -ResourceGroupName "WVD-ARM-00" -VMName "wvdmig-1" -CommandId 'RunPowerShellScript' -ScriptPath $LoadScriptPath 

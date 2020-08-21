@@ -14,4 +14,4 @@ $AssetstartDTM = (Get-Date)
 Invoke-WebRequest -Uri $infraURI -OutFile "$WVDMigrateInfraPath\Microsoft.RDInfra.RDAgent.Installer-x64.msi"
 Write-Host "Downloaded RDInfra Agent"
 $AssetendDTM = (Get-Date)
-Write-Log "Asset Download Time: $(($AssetendDTM-$AssetstartDTM).totalseconds) seconds"
+Write-Host "Agent Download Time: $(($AssetendDTM-$AssetstartDTM).totalseconds) seconds"
