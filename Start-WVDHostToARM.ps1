@@ -6,22 +6,27 @@
 #>
 
 param(
-    [Parameter(mandatory = $true)]
-    [string]$WVDHostPoolName,
-
-    [Parameter(mandatory = $true)]
+    
+    [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $true, ParameterSetName='PreStageOnly')]
     [string]$WVDHostPoolRGName,
 
-    [Parameter(mandatory = $true)]
+    [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='PreStageOnly')]
+    [string]$WVDHostPoolName,
+
+    [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='PreStageOnly')]
     [string]$HostVMRG,
 
-    [Parameter(mandatory = $false)]
+    [Parameter(mandatory = $false, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $false,ParameterSetName='PreStageOnly')]
     [string]$HostVMName,
 
-    [Parameter(mandatory = $false)]
+    [Parameter(mandatory = $false, ParameterSetName='PreStageOnly')]
     [switch]$PreStageOnly,
 
-    [Parameter(mandatory = $false)]
+    [Parameter(mandatory = $false, ParameterSetName='UpdateOnly')]
     [switch]$UpdateOnly
 )
 
