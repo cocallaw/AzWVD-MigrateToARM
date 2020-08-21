@@ -30,18 +30,7 @@ param(
 
 $LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
 $UpdateScriptPath = ".\VMScripts\Update-WVDAgents.ps1"
-
-function Run-PSonVM {
-    param (
-        [Parameter(Mandatory = $true)] 
-        [string]$HVMName,
-        [Parameter(Mandatory = $false)] 
-        [string]$HRGName,
-        [Parameter(Mandatory = $true)] 
-        [string]$ScriptPath
-    )
-    Invoke-AzVMRunCommand -ResourceGroupName $HRGName -VMName $HVMName -CommandId 'RunPowerShellScript' -ScriptPath 'sample.ps1' -Parameter @{param1 = "var1"; param2 = "var2" }
-}
+$OperationsScriptPath = ".\VMScripts\Run-WVDHostOperations.ps1"
 
 #Get VMs that are to be updated 
 if (($HostVMName.Length -eq 0)) {
