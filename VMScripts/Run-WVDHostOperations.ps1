@@ -3,13 +3,13 @@ param(
     [string]$HostPoolToken,
 
     [Parameter(mandatory = $false)]
-    [switch]$PreStageOnly,
+    [bool]$PreStageOnly = $false,
 
     [Parameter(mandatory = $false)]
-    [switch]$UpdateOnly,
+    [bool]$UpdateOnly = $false,
 
     [Parameter(mandatory = $false)]
-    [switch]$FullMigration
+    [bool]$FullMigration = $false
 )
 
 $WVDMigrateInfraPath = "C:\WVDMigrate"
