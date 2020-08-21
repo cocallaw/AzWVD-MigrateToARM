@@ -74,25 +74,22 @@ catch {
 if ($PreStageOnly) {
     foreach ($H in $HVM) {
         Write-Host "Downloading Current WVD Agent to" + $H.Name + "agent will not be installed" 
-        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $LoadScriptPath
+        Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $LoadScriptPath
     }
 }
 elseif ($UpdateOnly) {
     foreach ($H in $HVM) {
         Write-Host "Updating WVD Host" + $H.Name + "to host pool" + $WVDHostPoolName 
-        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $UpdateScriptPath
+        Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $UpdateScriptPath -Parameter @{HostPoolToken = $HPRegInfo.Token}
     }
 }
 else {
     foreach ($H in $HVM) {
         Write-Host "Downloading Current WVD Agent to" + $H.Name 
-        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $LoadScriptPath
+        Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $LoadScriptPath
     }
     foreach ($H in $HVM) {
         Write-Host "Updating WVD Host" + $H.Name + "to host pool" + $WVDHostPoolName 
-        Run-PSonVM -HRGName $H.ResourceGroupName -HVMName $HVMName -ScriptPath $UpdateScriptPath
+        Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $UpdateScriptPath -Parameter @{HostPoolToken = $HPRegInfo.Token}
     }
 }
-
-
-Invoke-AzVMRunCommand -ResourceGroupName "WVD-ARM-00" -VMName "wvdmig-1" -CommandId 'RunPowerShellScript' -ScriptPath $LoadScriptPath 
