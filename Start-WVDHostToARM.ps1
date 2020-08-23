@@ -34,6 +34,15 @@ $LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
 $UpdateScriptPath = ".\VMScripts\Update-WVDAgents.ps1"
 $OperationsScriptPath = ".\VMScripts\Run-WVDHostOperations.ps1"
 
+#Check for support Az Powershell Version
+Write-Host "Checking Powershell for Az.DesktopVirtualization Module"
+if (Get-Module -ListAvailable -Name Az.DesktopVirtualization) {
+    Write-Host "Az.DesktopVirtualization Module exists"
+  } else {
+    Write-Host "Az.DesktopVirtualization module not found please update your version of Azure Powershell. More Info: aka.ms/azps"
+    break
+  }
+
 #Get VMs that are to be updated 
 if (($HostVMName.Length -eq 0)) {
     $HVM = Get-AzVM -ResourceGroupName $HostVMRG
