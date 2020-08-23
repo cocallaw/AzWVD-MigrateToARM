@@ -1,7 +1,10 @@
 <#
-.SYNOPSIS
 
 .DESCRIPTION
+Powershell script to migrate WVD Host Pool VMs from Classic to Spring Update 2020
+
+.LINK
+https://github.com/cocallaw/AzWVD-MigrateToARM
 
 #>
 
