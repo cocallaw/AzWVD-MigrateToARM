@@ -9,24 +9,41 @@ param(
     
     [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
     [Parameter(mandatory = $true, ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVList')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListPS')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName='AllOps')]
     [string]$WVDHostPoolRGName,
 
     [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
     [Parameter(mandatory = $true,ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVList')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListPS')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName='AllOps')]
     [string]$WVDHostPoolName,
 
     [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
     [Parameter(mandatory = $true,ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $true, ParameterSetName='AllOps')]
     [string]$HostVMRG,
 
     [Parameter(mandatory = $false, ParameterSetName='UpdateOnly')]
     [Parameter(mandatory = $false,ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $false, ParameterSetName='AllOps')]
     [string]$HostVMName,
 
-    [Parameter(mandatory = $false, ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVList')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListPS')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListUD')]
+    [string]$HostCSVList,
+
+    [Parameter(mandatory = $true, ParameterSetName='PreStageOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListPS')]
     [switch]$PreStageOnly,
 
-    [Parameter(mandatory = $false, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $true, ParameterSetName='UpdateOnly')]
+    [Parameter(mandatory = $true,ParameterSetName='CSVListUD')]
     [switch]$UpdateOnly
 )
 
