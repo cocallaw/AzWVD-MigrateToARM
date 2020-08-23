@@ -34,6 +34,18 @@ if (($PreStageOnly) -or ($FullMigration)) {
 }
 
 if (($UpdateOnly) -or ($FullMigration)) {
+
+    if ($UpdateOnly) {
+        $tp = Test-Path -Path $WVDMigrateInfraPath\Microsoft.RDInfra.RDAgent.Installer-x64.msi
+        if ($tp) {
+            Write-Host "WVD Infra Agent Found at" $WVDMigrateInfraPath 
+        }
+        else {
+            Write-Host "WVD Infra Agent Not Found at" $WVDMigrateInfraPath 
+            Write-Host "Stopping migration process, please use -PreStageOnly parameter first on VM if using -UpdateOnly parameter"
+            break
+        }
+    }
     #Remove Installed versions of WVD Agent 
     Write-Host "Uninstalling any previous versions of RDInfra Agent on VM"
     $RDInfraApps = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq "Remote Desktop Services Infrastructure Agent" }
