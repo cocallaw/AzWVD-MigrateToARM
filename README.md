@@ -1,10 +1,19 @@
 # AzWVD-MigrateToARM
 
-The scripts that are contained in this repo help automate the process of migrating/updating your WVD host pool VMs to Spring Update 2020 with ARM integration. 
+The PowerShell scripts in this repository automate the process of migrating/updating a WVD Host Pool VM from WVD Classic to [Spring Update 2020](https://azure.microsoft.com/en-us/blog/new-windows-virtual-desktop-capabilities-now-generally-available/)
 
-In order to run the scripts you must have a current version of Azure Powershell installed that supports the [Az.DesktopVirtualization commands](https://docs.microsoft.com/en-us/powershell/module/az.desktopvirtualization/?view=azps-4.5.0), and permissions to create and interact with Windows Virtual Desktop. 
 
-#
+## Prerequisites 
+
+The following items are required in order to use these scripts to update your WVD Host Pool VMs to Spring Update 2020
+
+* Local Machine with current version of Azure Powershell installed that supports [Az.DesktopVirtualization](https://docs.microsoft.com/en-us/powershell/module/az.desktopvirtualization/?view=azps-4.5.0) commands such as `Get-AzWVDHostPool`
+* Azure Account able to connect to Azure via PowerSHell and perform actions against Windows Virtual Desktop Resources
+* A destination WVD Host Pool that is created through the [Azure Portal](https://ms.portal.azure.com/#blade/Microsoft_Azure_WVD/WvdManagerMenuBlade/overview) or [Powershell](https://docs.microsoft.com/en-us/powershell/module/az.desktopvirtualization/new-azwvdhostpool?view=azps-4.5.0)
+
+
+## Start-WVDHostToARM.ps1 Parameters
+
 
 | Prameter | Type | Required | Description |
 | ----------- | ----------- | ----------- |----------- |
