@@ -13,8 +13,9 @@ The following items are required in order to use these scripts to update your WV
 
 ## Selecting Host Pool VMs
 There are currently two options for specifying what VMs the script will perform operations on. 
-* Single VM Selection - To slect a single VM to for the script to perform operations against, specify both the `-HostVMRG` and `-HostVMName` parameters 
+* Single VM Selection - To select a single VM to for the script to perform operations against, specify both the `-HostVMRG` and `-HostVMName` parameters 
 * Resource Group Selection - To select all the VMs contained within a specific Azure Resource Group only specify the `-HostVMRG` parameter. Any VM in that Resource Group will be selected by the script.
+* CSV List Selection - To select multiple VMs from the same or differnt resource groups, utilize the `-HostCSVList` parameter. Specify the file path to the csv file, the template WVDHostList.csv file for column names.
 Selection of VMs by using a CSV list is under development to allow for greater control in differnt Azure governance models.
 
 ## Script Modes 
@@ -30,15 +31,27 @@ Selection of VMs by using a CSV list is under development to allow for greater c
 4. To start the migration process run the Start-WVDHostToARM.ps1 script using the prefered perameter set.
 * Prestage WVD Hosts Only
 
-`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] [-PreStageOnly]`
+`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] -PreStageOnly`
+
+OR
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String> -PreStageOnly`
 
 * Update WVD Hosts Only (requires prestage to have been performed)
 
-`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] [-UpdateOnly]`
+`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] -UpdateOnly`
+
+OR 
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String> -UpdateOnly`
 
 * Perform all operations
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>]`
+
+OR
+
+`AzWVD-MigrateToARM\Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String>`
 
 ## Start-WVDHostToARM.ps1 Parameters
 
@@ -46,7 +59,8 @@ Selection of VMs by using a CSV list is under development to allow for greater c
 | ----------- | ----------- | ----------- |----------- |
 | WVDHostPoolRGName | String | Yes | Name of Resource Group containing destination WVD Host Pool |
 | WVDHostPoolName | String | Yes | Name of the destination WVD Host Pool |
-| HostVMRG | String | Yes | Name of Resource Group containing WVD Hosts to update |
+| HostVMRG | String | No | Name of Resource Group containing WVD Hosts to update |
 | HostVMName | String | No | Name of single WVD Host to update. If not specified script will select all VMs in the Resource Group defined by the `-HostVMRG` parameter |
+| HostCSVList | String | No | Local file path of WVDHostList.csv file containing VM Names and their corresponding Resource Group Name |
 | PreStageOnly | Switch | No | If specified will only stage the VM by downloading current agent to C:\WVDMigrate directory on VM |
 | UpdateOnly | Switch | No | If specified will only update the VM WVD Host Pool registration. VM should be prestaged first with `-PreStageOnly` switch |
