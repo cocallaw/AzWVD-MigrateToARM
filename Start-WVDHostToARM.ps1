@@ -56,22 +56,47 @@ $OperationsScriptPath = ".\VMScripts\Run-WVDHostOperations.ps1"
 Write-Host "Checking Powershell for Az.DesktopVirtualization Module"
 if (Get-Module -ListAvailable -Name Az.DesktopVirtualization) {
     Write-Host "Az.DesktopVirtualization Module exists"
-  } else {
+}
+else {
     Write-Host "Az.DesktopVirtualization module not found please update your version of Azure Powershell. More Info: aka.ms/azps"
     break
-  }
-
-#Get VMs that are to be updated 
-if (($HostVMName.Length -eq 0)) {
-    $HVM = Get-AzVM -ResourceGroupName $HostVMRG
-    Write-Host "The following VMs will be updated"
-    foreach ($H in $HVM) {
-        $H.Name
-    }
 }
-elseif (($HostVMName.Length -gt 0)) {
-    $HVM = Get-AzVM -ResourceGroupName $HostVMRG -Name $HostVMName
-    Write-Host "The VM" $HVM.Name "will be updated"
+
+if ($HostCSVList.Length -ne 0) {
+    $tpcsv = Test-Path -Path $HostCSVList -PathType Leaf
+    if ($tpcsv) {
+        $extn = [IO.Path]::GetExtension($HostCSVList)
+        if ($extn -eq ".csv" ) {
+            $HVM = Import-Csv -Path $HostCSVList
+            Write-Host "The following VMs will be updated"
+            foreach ($H in $HVM) {
+                Write-Host $H.Name "in Resource Group" $H.ResourceGroupName
+            }
+        }
+        else {
+            Write-Host "Host VM List must be a .csv file"
+            Write-Host "Please check file type" $HostCSVList
+        }
+    }
+    else {
+        Write-Host "Host VM List not found"
+        Write-Host "Please check file path" $HostCSVList
+    } 
+}
+
+if ($HostCSVList.Length -eq 0) {
+    #Get VMs that are to be updated 
+    if (($HostVMName.Length -eq 0)) {
+        $HVM = Get-AzVM -ResourceGroupName $HostVMRG
+        Write-Host "The following VMs will be updated"
+        foreach ($H in $HVM) {
+            $H.Name
+        }
+    }
+    elseif (($HostVMName.Length -gt 0)) {
+        $HVM = Get-AzVM -ResourceGroupName $HostVMRG -Name $HostVMName
+        Write-Host "The VM" $HVM.Name "will be updated"
+    }
 }
 
 #Get the Host Pool Access Token 
