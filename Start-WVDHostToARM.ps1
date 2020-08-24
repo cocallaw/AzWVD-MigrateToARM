@@ -30,8 +30,6 @@ param(
     [switch]$UpdateOnly
 )
 
-$LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
-$UpdateScriptPath = ".\VMScripts\Update-WVDAgents.ps1"
 $OperationsScriptPath = ".\VMScripts\Run-WVDHostOperations.ps1"
 
 #Check for support Az Powershell Version
@@ -74,11 +72,13 @@ catch {
     Write-Host "Created new WVD Host Pool Access Token"
 }
 
+$Token = $HPRegInfo.Token
+
 if ($PreStageOnly) {
     foreach ($H in $HVM) {
         Write-Host "Downloading Current WVD Agent to" $H.Name "the agent will not be installed" 
         try {
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = $true }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "F" }
             $s.Value[0].Message
         }
         catch {
@@ -90,7 +90,7 @@ elseif ($UpdateOnly) {
     try {
         foreach ($H in $HVM) {
             Write-Host "Updating WVD Host" $H.Name "to host pool" $WVDHostPoolName 
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; UpdateOnly = $true }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "F"; UpdateOnly = "T" }
             $s.Value[0].Message
         }
         Write-Host "Restarting WVD Host" $H.Name
@@ -104,7 +104,7 @@ else {
     try {
         foreach ($H in $HVM) {
             Write-Host "Updating WVD Host" $H.Name "to host pool" $WVDHostPoolName 
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; FullMigration = $true }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "T" }
             $s.Value[0].Message
         }
         Write-Host "Restarting WVD Host" $H.Name
