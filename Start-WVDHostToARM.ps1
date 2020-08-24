@@ -63,6 +63,7 @@ else {
 }
 
 if ($HostCSVList.Length -ne 0) {
+    Write-Host "VM selection is being performed by CSV list, checking provided file"
     $tpcsv = Test-Path -Path $HostCSVList -PathType Leaf
     if ($tpcsv) {
         $extn = [IO.Path]::GetExtension($HostCSVList)
@@ -123,8 +124,9 @@ if ($PreStageOnly) {
     foreach ($H in $HVM) {
         Write-Host "Downloading Current WVD Agent to" $H.Name "the agent will not be installed" 
         try {
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "F" }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name -CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "F" }
             $s.Value[0].Message
+            Write-Host "WVD agent download steps have completed on" $H.Name
         }
         catch {
             Write-Host "There was an issue attempting to download the latest WVD agent to the VM" $H.Name
@@ -135,8 +137,9 @@ elseif ($UpdateOnly) {
     try {
         foreach ($H in $HVM) {
             Write-Host "Updating WVD Host" $H.Name "to host pool" $WVDHostPoolName 
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "F"; UpdateOnly = "T" }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name -CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "F"; UpdateOnly = "T" }
             $s.Value[0].Message
+            Write-Host "WVD Host VM configuration steps have completed on" $H.Name
         }
         Write-Host "Restarting WVD Host" $H.Name
         Restart-AzVM -ResourceGroupName $H.ResourceGroupName -Name $H.Name
@@ -149,7 +152,7 @@ else {
     try {
         foreach ($H in $HVM) {
             Write-Host "Updating WVD Host" $H.Name "to host pool" $WVDHostPoolName 
-            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name-CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "T" }
+            $s = Invoke-AzVMRunCommand -ResourceGroupName $H.ResourceGroupName -VMName $H.Name -CommandId 'RunPowerShellScript' -ScriptPath $OperationsScriptPath -Parameter @{HostPoolToken = $Token; PreStageOnly = "T"; UpdateOnly = "T" }
             $s.Value[0].Message
         }
         Write-Host "Restarting WVD Host" $H.Name
@@ -160,3 +163,4 @@ else {
     }
 
 }
+
