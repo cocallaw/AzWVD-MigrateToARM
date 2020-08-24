@@ -2,20 +2,18 @@ param(
     [Parameter(mandatory = $true)]
     [string]$HostPoolToken,
 
-    [Parameter(mandatory = $false)]
-    [bool]$PreStageOnly = $false,
+    [Parameter(mandatory = $true)]
+    [string]$PreStageOnly,
 
-    [Parameter(mandatory = $false)]
-    [bool]$UpdateOnly = $false,
-
-    [Parameter(mandatory = $false)]
-    [bool]$FullMigration = $false
+    [Parameter(mandatory = $true)]
+    [string]$UpdateOnly
 )
 
 $WVDMigrateInfraPath = "C:\WVDMigrate"
 $infraURI = "https://query.prod.cms.rt.microsoft.com/cms/api/am/binary/RWrmXv"
 
-if (($PreStageOnly) -or ($FullMigration)) {
+
+if ($PreStageOnly -eq "T") {
     #Create folder for agent download
     try {
         New-Item -Path $WVDMigrateInfraPath -ItemType Directory -Force
@@ -33,19 +31,17 @@ if (($PreStageOnly) -or ($FullMigration)) {
     Write-Host "Agent Download Time: $(($AssetendDTM-$AssetstartDTM).totalseconds) seconds"
 }
 
-if (($UpdateOnly) -or ($FullMigration)) {
-
-    if ($UpdateOnly) {
-        $tp = Test-Path -Path $WVDMigrateInfraPath\Microsoft.RDInfra.RDAgent.Installer-x64.msi
-        if ($tp) {
-            Write-Host "WVD Infra Agent Found at" $WVDMigrateInfraPath 
-        }
-        else {
-            Write-Host "WVD Infra Agent Not Found at" $WVDMigrateInfraPath 
-            Write-Host "Stopping migration process, please use -PreStageOnly parameter first on VM if using -UpdateOnly parameter"
-            break
-        }
+if ($UpdateOnly -eq "T") {
+    $tp = Test-Path -Path "C:\WVDMigrate\Microsoft.RDInfra.RDAgent.Installer-x64.msi" -PathType leaf
+    if ($tp -eq $true) {
+        Write-Host "WVD Infra Agent Found at" $WVDMigrateInfraPath 
     }
+    elseif ($tp -eq $false) {
+        Write-Host "WVD Infra Agent Not Found at" $WVDMigrateInfraPath 
+        Write-Host "Stopping migration process, please use -PreStageOnly parameter first on VM if using -UpdateOnly parameter"
+        break
+    }
+
     #Remove Installed versions of WVD Agent 
     Write-Host "Uninstalling any previous versions of RDInfra Agent on VM"
     $RDInfraApps = Get-WmiObject -Class Win32_Product | Where-Object { $_.Name -eq "Remote Desktop Services Infrastructure Agent" }
@@ -61,3 +57,4 @@ if (($UpdateOnly) -or ($FullMigration)) {
     $sts = $agent_deploy_status.ExitCode
     Write-Host "Installing RD Infra Agent on VM Complete. Exit code=$sts"
 }
+
