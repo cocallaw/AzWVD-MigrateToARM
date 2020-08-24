@@ -30,8 +30,6 @@ param(
     [switch]$UpdateOnly
 )
 
-$LoadScriptPath = ".\VMScripts\Load-WVDAgents.ps1"
-$UpdateScriptPath = ".\VMScripts\Update-WVDAgents.ps1"
 $OperationsScriptPath = ".\VMScripts\Run-WVDHostOperations.ps1"
 
 #Check for support Az Powershell Version
