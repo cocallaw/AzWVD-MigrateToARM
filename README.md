@@ -41,6 +41,13 @@ OR
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String> -PreStageOnly`
 
+OR 
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostVMRG <String> [-HostVMName <String>] -PreStageOnly`
+
+OR
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostCSVList <String> -PreStageOnly`
 
 * Update WVD Hosts Only (requires prestage to have been performed)
 
@@ -50,6 +57,14 @@ OR
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String> -UpdateOnly`
 
+OR 
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostVMRG <String> [-HostVMName <String>] -UpdateOnly`
+
+OR
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostCSVList <String> -UpdateOnly`
+
 * Perform all operations
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>]`
@@ -57,6 +72,14 @@ OR
 OR
 
 `AzWVD-MigrateToARM\Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String>`
+
+OR 
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostVMRG <String> [-HostVMName <String>]`
+
+OR
+
+`Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostCSVList <String>`
 
 ## Start-WVDHostToARM.ps1 Parameters
 
