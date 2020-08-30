@@ -83,12 +83,13 @@ OR
 
 ## Start-WVDHostToARM.ps1 Parameters
 
-| Prameter | Type | Required | Description |
-| ----------- | ----------- | ----------- |----------- |
-| WVDHostPoolRGName | String | Yes | Name of Resource Group containing destination WVD Host Pool |
-| WVDHostPoolName | String | Yes | Name of the destination WVD Host Pool |
-| HostVMRG | String | No | Name of Resource Group containing WVD Hosts to update |
-| HostVMName | String | No | Name of single WVD Host to update. If not specified script will select all VMs in the Resource Group defined by the `-HostVMRG` parameter |
-| HostCSVList | String | No | Local file path of WVDHostList.csv file containing VM Names and their corresponding Resource Group Name |
-| PreStageOnly | Switch | No | If specified will only stage the VM by downloading current agent to C:\WVDMigrate directory on VM |
-| UpdateOnly | Switch | No | If specified will only update the VM WVD Host Pool registration. VM should be prestaged first with `-PreStageOnly` switch |
+| Prameter | Type | Description |
+| ----------- | ----------- |----------- |
+| WVDHostPoolRGName | String | Name of Resource Group containing destination WVD Host Pool |
+| WVDHostPoolName | String | Name of the destination WVD Host Pool |
+| WVDHostPoolTkn | String | Value of the destination WVD Host Pool registration token |
+| HostVMRG | String | Name of Resource Group containing WVD Hosts to update |
+| HostVMName | String | Name of single WVD Host to update. If not specified script will select all VMs in the Resource Group defined by the `-HostVMRG` parameter |
+| HostCSVList | String | Local file path of WVDHostList.csv file containing VM Names and their corresponding Resource Group Name |
+| PreStageOnly | Switch | If specified will only stage the VM by downloading current agent to C:\WVDMigrate directory on VM |
+| UpdateOnly | Switch | If specified will only update the VM WVD Host Pool registration. VM should be prestaged first with `-PreStageOnly` switch |
