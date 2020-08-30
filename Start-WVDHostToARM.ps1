@@ -16,6 +16,7 @@ param(
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$WVDHostPoolRGName,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
@@ -24,29 +25,52 @@ param(
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$WVDHostPoolName,
+
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALL')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALLCSV')]
+    [string]$WVDHostPoolTkn,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALL')]
     [string]$HostVMRG,
 
     [Parameter(mandatory = $false, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $false, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $false, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNALL')]
     [string]$HostVMName,
 
     [Parameter(mandatory = $true, ParameterSetName = 'CSVList')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALLCSV')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$HostCSVList,
 
     [Parameter(mandatory = $true, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
     [switch]$PreStageOnly,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
     [switch]$UpdateOnly
 )
 
