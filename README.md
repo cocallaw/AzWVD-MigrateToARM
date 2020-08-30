@@ -12,7 +12,7 @@ The following items are required in order to use these scripts to update your WV
 * Host Pool VMs and Destination Host Pool resources must be located in the same Azure subscription 
 
 ## Selecting Host Pool VMs
-There are currently two options for specifying what VMs the script will perform operations on. 
+There are currently three options for specifying what VMs the script will perform operations on. 
 * Single VM Selection - To select a single VM to for the script to perform operations against, specify both the `-HostVMRG` and `-HostVMName` parameters 
 * Resource Group Selection - To select all the VMs contained within a specific Azure Resource Group only specify the `-HostVMRG` parameter. Any VM in that Resource Group will be selected by the script.
 * CSV List Selection - To select multiple VMs from the same or differnt resource groups, utilize the `-HostCSVList` parameter. Specify the file path to the csv file, the template WVDHostList.csv file for column names.
@@ -23,6 +23,10 @@ Selection of VMs by using a CSV list is under development to allow for greater c
 * UpdateOnly - If the `-UpdateOnly` parameter is specified the script will perform the update/migration process of the WVD Host VM, by utilizing the WVD Infrastructure Agent Located at `C:\WVDMigrate`. This mode requires that prestaging of the VMs has already been performed
 * All Operations - If `-PreStageOnly` or `-UpdateOnly` is not specified that script will download the latest agent and update/migrate the VM to the new host pool when run.  
 
+## Host Pool Registration Info 
+Registration information is collected by choosing one of two methods
+* If the `-WVDHostPoolRGName` and `-WVDHostPoolName` parameters are specified, the script will use that info and the permissions of the current signed in user to collect the registration info
+* If `-WVDHostPoolTkn` parameter is specified the provided string will be used as the value for the host pool registration token.
 
 ## How to use this tool
 1. Download the [latest production release](https://github.com/cocallaw/AzWVD-MigrateToARM/releases) of the scripts to your local machine.
@@ -36,6 +40,7 @@ Selection of VMs by using a CSV list is under development to allow for greater c
 OR
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostCSVList <String> -PreStageOnly`
+
 
 * Update WVD Hosts Only (requires prestage to have been performed)
 
