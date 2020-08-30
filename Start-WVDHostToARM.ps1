@@ -145,9 +145,9 @@ if (($WVDHostPoolRGName.Length -ne 0) -and ($WVDHostPoolName.Length -ne 0)) {
     $Token = $HPRegInfo.Token
 }
 elseif ((($WVDHostPoolRGName.Length -eq 0) -and ($WVDHostPoolName.Length -eq 0)) -and ($WVDHostPoolTkn.Length -ne 0)) {
-    
+    Write-Host "Using User Provide Host Pool Token"
+    $Token = $WVDHostPoolTkn
 }
-
 
 if ($PreStageOnly) {
     foreach ($H in $HVM) {
@@ -192,4 +192,3 @@ else {
     }
 
 }
-
