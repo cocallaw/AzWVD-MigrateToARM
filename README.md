@@ -33,7 +33,7 @@ Registration information is collected by choosing one of two methods
 2. Extract the scripts, and in PowerShell navigate to the base direcotry that contains the Start-WVDHostToARM.ps1 script
 3. In the same PowerShell session as step 2, connect to your Azure subscription containing the host pool VMs and destination host pool.
 4. To start the migration process run the Start-WVDHostToARM.ps1 script using the prefered perameter set.
-* Prestage WVD Hosts Only
+#### Prestage WVD Hosts Only
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] -PreStageOnly`
 
@@ -49,7 +49,7 @@ OR
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostCSVList <String> -PreStageOnly`
 
-* Update WVD Hosts Only (requires prestage to have been performed)
+#### Update WVD Hosts Only (requires prestage to have been performed)
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> -WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>] -UpdateOnly`
 
@@ -65,7 +65,7 @@ OR
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolTkn <String> -HostCSVList <String> -UpdateOnly`
 
-* Perform all operations
+#### Perform all operations
 
 `Start-WVDHostToARM.ps1 -WVDHostPoolRGName <String> WVDHostPoolName <String> -HostVMRG <String> [-HostVMName <String>]`
 
