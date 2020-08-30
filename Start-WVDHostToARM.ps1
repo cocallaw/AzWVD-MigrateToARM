@@ -100,25 +100,30 @@ if ($HostCSVList.Length -eq 0) {
     }
 }
 
-#Get the Host Pool Access Token 
-$HPRegInfo = $null
-Write-Host "Collecting WVD Registration Info for Host Pool" $WVDHostPoolName 
-try {
-    $HPRegInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
-    if (($HPRegInfo.Token.Length) -lt 5) {
+#Get the Host Pool Access Token
+if (($WVDHostPoolRGName.Length -ne 0) -and ($WVDHostPoolName.Length -ne 0)) {
+    $HPRegInfo = $null
+    Write-Host "Collecting WVD Registration Info for Host Pool" $WVDHostPoolName 
+    try {
+        $HPRegInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
+        if (($HPRegInfo.Token.Length) -lt 5) {
+            $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+            Write-Host "Created new WVD Host Pool Access Token" 
+        }
+        else {
+            Write-Host "Exported WVD Host Pool Access Token"    
+        }
+    }
+    catch {
         $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-        Write-Host "Created new WVD Host Pool Access Token" 
+        Write-Host "Created new WVD Host Pool Access Token"
     }
-    else {
-        Write-Host "Exported WVD Host Pool Access Token"    
-    }
+    $Token = $HPRegInfo.Token
 }
-catch {
-    $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-    Write-Host "Created new WVD Host Pool Access Token"
+elseif ((($WVDHostPoolRGName.Length -eq 0) -and ($WVDHostPoolName.Length -eq 0)) -and ($WVDHostPoolTkn.Length -ne 0)) {
+    
 }
 
-$Token = $HPRegInfo.Token
 
 if ($PreStageOnly) {
     foreach ($H in $HVM) {
