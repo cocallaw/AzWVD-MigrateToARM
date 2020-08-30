@@ -16,6 +16,7 @@ param(
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$WVDHostPoolRGName,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
@@ -24,29 +25,52 @@ param(
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$WVDHostPoolName,
+
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALL')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALLCSV')]
+    [string]$WVDHostPoolTkn,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALL')]
     [string]$HostVMRG,
 
     [Parameter(mandatory = $false, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $false, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $false, ParameterSetName = 'AllOps')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNPS')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNUD')]
+    [Parameter(mandatory = $false, ParameterSetName = 'HPTKNALL')]
     [string]$HostVMName,
 
     [Parameter(mandatory = $true, ParameterSetName = 'CSVList')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNALLCSV')]
+    [Parameter(mandatory = $true, ParameterSetName = 'AllOpsCSV')]
     [string]$HostCSVList,
 
     [Parameter(mandatory = $true, ParameterSetName = 'PreStageOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVPS')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNPS')]
     [switch]$PreStageOnly,
 
     [Parameter(mandatory = $true, ParameterSetName = 'UpdateOnly')]
     [Parameter(mandatory = $true, ParameterSetName = 'CSVListUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNCSVUD')]
+    [Parameter(mandatory = $true, ParameterSetName = 'HPTKNUD')]
     [switch]$UpdateOnly
 )
 
@@ -100,25 +124,30 @@ if ($HostCSVList.Length -eq 0) {
     }
 }
 
-#Get the Host Pool Access Token 
-$HPRegInfo = $null
-Write-Host "Collecting WVD Registration Info for Host Pool" $WVDHostPoolName 
-try {
-    $HPRegInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
-    if (($HPRegInfo.Token.Length) -lt 5) {
+#Get the Host Pool Access Token
+if (($WVDHostPoolRGName.Length -ne 0) -and ($WVDHostPoolName.Length -ne 0)) {
+    $HPRegInfo = $null
+    Write-Host "Collecting WVD Registration Info for Host Pool" $WVDHostPoolName 
+    try {
+        $HPRegInfo = Get-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName
+        if (($HPRegInfo.Token.Length) -lt 5) {
+            $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
+            Write-Host "Created new WVD Host Pool Access Token" 
+        }
+        else {
+            Write-Host "Exported WVD Host Pool Access Token"    
+        }
+    }
+    catch {
         $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-        Write-Host "Created new WVD Host Pool Access Token" 
+        Write-Host "Created new WVD Host Pool Access Token"
     }
-    else {
-        Write-Host "Exported WVD Host Pool Access Token"    
-    }
+    $Token = $HPRegInfo.Token
 }
-catch {
-    $HPRegInfo = New-AzWvdRegistrationInfo -ResourceGroupName $WVDHostPoolRGName -HostPoolName $WVDHostPoolName -ExpirationTime $((get-date).ToUniversalTime().AddDays(1).ToString('yyyy-MM-ddTHH:mm:ss.fffffffZ'))
-    Write-Host "Created new WVD Host Pool Access Token"
+elseif ((($WVDHostPoolRGName.Length -eq 0) -and ($WVDHostPoolName.Length -eq 0)) -and ($WVDHostPoolTkn.Length -ne 0)) {
+    Write-Host "Using User Provide Host Pool Token"
+    $Token = $WVDHostPoolTkn
 }
-
-$Token = $HPRegInfo.Token
 
 if ($PreStageOnly) {
     foreach ($H in $HVM) {
@@ -163,4 +192,3 @@ else {
     }
 
 }
-
